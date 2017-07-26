@@ -1,0 +1,11 @@
+FROM rickgong/centos-base:1.0
+
+RUN wget https://github.com/coreos/etcd/releases/download/v3.2.4/etcd-v3.2.4-linux-amd64.tar.gz
+RUN tar zxvf etcd-v3.2.4-linux-amd64.tar.gz
+RUN mv etcd-v3.2.4-linux-amd64/etcd /usr/bin
+RUN mv etcd-v3.2.4-linux-amd64/etcdctl /usr/bin
+
+MAINTAINER  rick gong "rickgong@outlook.com"
+LABEL name="etcd"
+
+CMD ["/bin/bash"]

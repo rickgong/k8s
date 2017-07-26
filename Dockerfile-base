@@ -1,0 +1,15 @@
+FROM centos:7
+
+RUN mkdir /work
+WORKDIR /work
+
+RUN yum -y update
+RUN yum -y install java
+RUN yum -y install wget
+RUN yum -y install telnet
+RUN yum -y install vim
+
+MAINTAINER  rick gong "rickgong@outlook.com"
+LABEL name="base centos image"
+
+CMD ["/bin/bash"]
