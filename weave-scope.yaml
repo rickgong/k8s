@@ -10,14 +10,65 @@ items:
           {
             "server-version": "master-c3b4969",
             "original-request": {
-              "url": "/k8s/v1.5/scope.yaml",
-              "date": "Mon Jul 31 2017 05:44:26 GMT+0000 (UTC)"
+              "url": "/k8s/v1.6/scope.yaml",
+              "date": "Mon Jul 31 2017 07:08:53 GMT+0000 (UTC)"
             },
             "email-address": "support@weave.works"
           }
       labels:
         name: weave-scope
-  - apiVersion: extensions/v1beta1
+  - apiVersion: rbac.authorization.k8s.io/v1beta1
+    kind: ClusterRole
+    metadata:
+      name: weave-scope
+      annotations:
+        cloud.weave.works/launcher-info: |-
+          {
+            "server-version": "master-c3b4969",
+            "original-request": {
+              "url": "/k8s/v1.6/scope.yaml",
+              "date": "Mon Jul 31 2017 07:08:53 GMT+0000 (UTC)"
+            },
+            "email-address": "support@weave.works"
+          }
+      labels:
+        name: weave-scope
+    rules:
+      - apiGroups:
+          - '*'
+        resources:
+          - '*'
+        verbs:
+          - '*'
+      - nonResourceURLs:
+          - '*'
+        verbs:
+          - '*'
+  - apiVersion: rbac.authorization.k8s.io/v1beta1
+    kind: ClusterRoleBinding
+    metadata:
+      name: weave-scope
+      annotations:
+        cloud.weave.works/launcher-info: |-
+          {
+            "server-version": "master-c3b4969",
+            "original-request": {
+              "url": "/k8s/v1.6/scope.yaml",
+              "date": "Mon Jul 31 2017 07:08:53 GMT+0000 (UTC)"
+            },
+            "email-address": "support@weave.works"
+          }
+      labels:
+        name: weave-scope
+    roleRef:
+      kind: ClusterRole
+      name: weave-scope
+      apiGroup: rbac.authorization.k8s.io
+    subjects:
+      - kind: ServiceAccount
+        name: weave-scope
+        namespace: kube-system
+  - apiVersion: apps/v1beta1
     kind: Deployment
     metadata:
       name: weave-scope-app
@@ -26,8 +77,8 @@ items:
           {
             "server-version": "master-c3b4969",
             "original-request": {
-              "url": "/k8s/v1.5/scope.yaml",
-              "date": "Mon Jul 31 2017 05:44:26 GMT+0000 (UTC)"
+              "url": "/k8s/v1.6/scope.yaml",
+              "date": "Mon Jul 31 2017 07:08:53 GMT+0000 (UTC)"
             },
             "email-address": "support@weave.works"
           }
@@ -64,8 +115,8 @@ items:
           {
             "server-version": "master-c3b4969",
             "original-request": {
-              "url": "/k8s/v1.5/scope.yaml",
-              "date": "Mon Jul 31 2017 05:44:26 GMT+0000 (UTC)"
+              "url": "/k8s/v1.6/scope.yaml",
+              "date": "Mon Jul 31 2017 07:08:53 GMT+0000 (UTC)"
             },
             "email-address": "support@weave.works"
           }
@@ -75,13 +126,13 @@ items:
         weave-cloud-component: scope
         weave-scope-component: app
     spec:
-      type: NodePort
+      type: nodePort
       ports:
         - name: app
           port: 80
           protocol: TCP
-          nodePort: 30406 
           targetPort: 4040
+          nodePort: 30406
       selector:
         name: weave-scope-app
         app: weave-scope
@@ -96,8 +147,8 @@ items:
           {
             "server-version": "master-c3b4969",
             "original-request": {
-              "url": "/k8s/v1.5/scope.yaml",
-              "date": "Mon Jul 31 2017 05:44:26 GMT+0000 (UTC)"
+              "url": "/k8s/v1.6/scope.yaml",
+              "date": "Mon Jul 31 2017 07:08:53 GMT+0000 (UTC)"
             },
             "email-address": "support@weave.works"
           }
@@ -109,9 +160,6 @@ items:
     spec:
       template:
         metadata:
-          annotations:
-            scheduler.alpha.kubernetes.io/tolerations: >-
-              [{"key":"dedicated","operator":"Equal","value":"master","effect":"NoSchedule"}]
           labels:
             name: weave-scope-agent
             app: weave-scope
@@ -139,6 +187,9 @@ items:
           hostNetwork: true
           hostPID: true
           serviceAccountName: weave-scope
+          tolerations:
+            - effect: NoSchedule
+              operator: Exists
           volumes:
             - name: docker-socket
               hostPath:
@@ -146,3 +197,5 @@ items:
             - name: scope-plugins
               hostPath:
                 path: /var/run/scope/plugins
+      updateStrategy:
+        type: RollingUpdate
