@@ -126,7 +126,7 @@ items:
         weave-cloud-component: scope
         weave-scope-component: app
     spec:
-      type: nodePort
+      type: NodePort
       ports:
         - name: app
           port: 80
